@@ -1,39 +1,71 @@
 import os
-
 import cv2
-
+import time
 
 DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-number_of_classes = 3
+# Update to include all alphabet letters
+number_of_classes = 26
 dataset_size = 100
 
-cap = cv2.VideoCapture(2)
-for j in range(number_of_classes):
-    if not os.path.exists(os.path.join(DATA_DIR, str(j))):
-        os.makedirs(os.path.join(DATA_DIR, str(j)))
+# Create folders for all letters A-Z
+for i in range(number_of_classes):
+    letter = chr(65 + i)  # ASCII: A=65, B=66, etc.
+    class_dir = os.path.join(DATA_DIR, letter)
+    if not os.path.exists(class_dir):
+        os.makedirs(class_dir)
+    print(f"Created directory for letter {letter}")
 
-    print('Collecting data for class {}'.format(j))
+# Camera setup code
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("Error: Could not open camera.")
+    exit()
 
-    done = False
+# Collect data for each letter
+for i in range(number_of_classes):
+    letter = chr(65 + i)
+    print(f'Collecting data for letter {letter}')
+    
+    # Wait for user to be ready
     while True:
         ret, frame = cap.read()
-        cv2.putText(frame, 'Ready? Press "Q" ! :)', (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3,
-                    cv2.LINE_AA)
+        if not ret:
+            print("Failed to capture frame")
+            continue
+            
+        cv2.putText(frame, f'Ready to collect data for letter {letter}. Press "Q" when ready!', 
+                   (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
-        if cv2.waitKey(25) == ord('q'):
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+    
+    # Small delay after pressing Q
+    time.sleep(1)
+    
+    # Collect images
     counter = 0
     while counter < dataset_size:
         ret, frame = cap.read()
+        if not ret:
+            continue
+            
+        cv2.putText(frame, f'Collecting {counter+1}/{dataset_size} for {letter}', 
+                   (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
-        cv2.waitKey(25)
-        cv2.imwrite(os.path.join(DATA_DIR, str(j), '{}.jpg'.format(counter)), frame)
-
+        
+        # Save the image
+        cv2.imwrite(os.path.join(DATA_DIR, letter, f'{counter}.jpg'), frame)
         counter += 1
+        
+        # Small delay between captures
+        cv2.waitKey(100)
+    
+    print(f"Finished collecting data for letter {letter}")
+    time.sleep(1)
 
 cap.release()
 cv2.destroyAllWindows()
