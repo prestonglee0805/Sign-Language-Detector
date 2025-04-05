@@ -45,10 +45,10 @@ The next command will trigger the webcam and show live predictions of the hand:
 
 `python inference_classifier.py` 
 
-![Demo Image][demoimage.png]
+![Demo Image](demoimage.png)
 
 ## License
 
 MIT License
 
-Copyright (c) 2025 Preston Lee
+Copyright (c) 2025 Preston L
