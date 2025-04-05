@@ -25,7 +25,7 @@ Install all necessary dependencies from the requirements.txt file. Note that ope
 
 `pip install -r requirements.txt` 
 
-###Image Collection 
+### Image Collection 
 You will be prompted to enter a label of A, B, C, ... Z and the script will activate your webcam to capture images for that label, storing in a separate data file. You will press 'q' to take images for each sign language symbol with your hand for each letter. In your terminal, run: 
 
 `python collect_imgs.py` 
